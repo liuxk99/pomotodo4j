@@ -6,6 +6,10 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     implementation project(path: ':jlibs')
     implementation project(path: ':utils4j')
+
+    compile "com.squareup.retrofit2:retrofit:2.1.0"
+    compile "com.squareup.retrofit2:converter-gson:2.1.0"
+    compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
 }
 
 sourceCompatibility = "1.7"

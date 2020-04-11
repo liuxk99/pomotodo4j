@@ -1,13 +1,13 @@
 package com.sj.pomotodo;
 
 import com.sj.jlibs.persistence.FileUtils;
+import com.sj.pomotodo.Todo;
+import com.sj.pomotodo.TodoList;
 import com.sj4j.utils.GsonStore;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class TodoTest {
 

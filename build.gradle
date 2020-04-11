@@ -1,0 +1,20 @@
+apply plugin: 'java-library'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    testImplementation 'junit:junit:4.12'
+    implementation project(path: ':jlibs')
+    implementation project(path: ':utils4j')
+}
+
+sourceCompatibility = "1.7"
+targetCompatibility = "1.7"
+
+compileJava{
+    options.encoding = "UTF-8"
+}
+
+compileTestJava {
+    options.encoding = "UTF-8"
+}

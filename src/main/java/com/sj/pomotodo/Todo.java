@@ -148,4 +148,14 @@ public class Todo {
 
         return sb.toString();
     }
+
+    public String toText() {
+        final String LF = "\n";
+        StringBuilder sb = new StringBuilder();
+        {
+            sb.append("created time: ").append(getCreated_at()).append(LF);
+            sb.append("description: ").append(getDescription()).append(LF);
+        }
+        return sb.toString();
+    }
 }

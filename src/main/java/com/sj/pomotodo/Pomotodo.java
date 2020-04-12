@@ -1,6 +1,9 @@
 package com.sj.pomotodo;
 
 import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -9,7 +12,8 @@ import retrofit2.http.Header;
 import retrofit2.http.POST;
 
 public class Pomotodo {
-    String token;
+    public final Retrofit retrofit;
+    public String token;
 
     public interface TodosService {
         @FormUrlEncoded
@@ -23,11 +27,28 @@ public class Pomotodo {
 
     }
 
-    static class Todos {
-        static final String baseUrl = "https://api.pomotodo.com/1/";
+    public static class Todos {
+        public static final String baseUrl = "https://api.pomotodo.com/1/";
+
+        public static void postTodo(Retrofit retrofit, String token, String description, Callback<Todo> cb) throws InterruptedException {
+                TodosService service = retrofit.create(TodosService.class);
+                Call<Todo> call = service.postTodo(String.format("token %s", token), description);
+                call.enqueue(cb);
+        }
+
+        public static void getTodos(Retrofit retrofit, String token, Callback<TodoList> cb) {
+            TodosService service = retrofit.create(TodosService.class);
+            Call<TodoList> call = service.getTodos(String.format("token %s", token));
+            call.enqueue(cb);
+        }
     }
 
     public Pomotodo(String token) {
         this.token = token;
+
+        retrofit = new Retrofit.Builder()
+            .baseUrl(Pomotodo.Todos.baseUrl)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build();
     }
 }

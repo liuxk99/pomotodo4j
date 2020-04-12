@@ -13,20 +13,14 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class PomotodoTest {
-
-    private Retrofit retrofit;
-    private String token;
-
+    private Pomotodo pomotodo;
 
     @org.junit.Before
     public void setUp() throws Exception {
-        retrofit = new Retrofit.Builder()
-            .baseUrl(Pomotodo.Todos.baseUrl)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build();
-
-        token = FileUtils.readStringFromFile("pomotodo.token");
+        String token = FileUtils.readStringFromFile("pomotodo.token");
         System.out.println(token);
+
+        pomotodo = new Pomotodo(token);
     }
 
     @org.junit.After
@@ -37,9 +31,7 @@ public class PomotodoTest {
     public void testcase_todos() throws InterruptedException {
         final CountDownLatch mLocker = new CountDownLatch(1);
         {
-            Pomotodo.TodosService service = retrofit.create(Pomotodo.TodosService.class);
-            Call<TodoList> call = service.getTodos(String.format("token %s", token));
-            call.enqueue(new Callback<TodoList>() {
+            Callback<TodoList> cb = new Callback<TodoList>() {
                 @Override
                 public void onResponse(Call<TodoList> call, Response<TodoList> response) {
                     System.out.println("onResponse(" + call + ", " + response.code() + ")");
@@ -59,7 +51,9 @@ public class PomotodoTest {
                     System.out.println("onFailure(" + call + ", " + t + ")");
                     mLocker.countDown();
                 }
-            });
+            };
+
+            Pomotodo.Todos.getTodos(pomotodo.retrofit, pomotodo.token, cb);
         }
         mLocker.await();
     }
@@ -68,9 +62,8 @@ public class PomotodoTest {
     public void testcase_postTodo() throws InterruptedException {
         final CountDownLatch mLocker = new CountDownLatch(1);
         {
-            Pomotodo.TodosService service = retrofit.create(Pomotodo.TodosService.class);
-            Call<Todo> call = service.postTodo(String.format("token %s", token), "xxx");
-            call.enqueue(new Callback<Todo>() {
+            String description = "xxx";
+            Callback<Todo> cb = new Callback<Todo>() {
                 @Override
                 public void onResponse(Call<Todo> call, Response<Todo> response) {
                     System.out.println("onResponse(" + call + ", " + response.code() + ")");
@@ -87,8 +80,10 @@ public class PomotodoTest {
                     System.out.println("onFailure(" + call + ", " + t + ")");
                     mLocker.countDown();
                 }
-            });
+            };
+            Pomotodo.Todos.postTodo(pomotodo.retrofit, pomotodo.token, description, cb);
         }
         mLocker.await();
     }
+
 }

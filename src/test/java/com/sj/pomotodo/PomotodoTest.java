@@ -1,6 +1,5 @@
 package com.sj.pomotodo;
 
-import com.sj.jlibs.misc.DumpUtils;
 import com.sj.jlibs.persistence.FileUtils;
 
 import org.junit.Test;
@@ -15,43 +14,41 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class PomotodoTest {
 
+    private Retrofit retrofit;
+    private String token;
+
+
     @org.junit.Before
     public void setUp() throws Exception {
+        retrofit = new Retrofit.Builder()
+            .baseUrl(Pomotodo.Todos.baseUrl)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build();
+
+        token = FileUtils.readStringFromFile("pomotodo.token");
+        System.out.println(token);
     }
 
     @org.junit.After
     public void tearDown() throws Exception {
     }
 
-    @org.junit.Test
-    public void testcase_pomotodo() {
-        String token = FileUtils.readStringFromFile("pomotodo.token");
-        System.out.println(token);
-    }
-
     @Test
     public void testcase_todos() throws InterruptedException {
-        String token = FileUtils.readStringFromFile("pomotodo.token");
-//        Pomotodo pomotodo = new Pomotodo(token);
-
-        Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl(Pomotodo.Todos.baseUrl)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build();
-
         final CountDownLatch mLocker = new CountDownLatch(1);
         {
             Pomotodo.TodosService service = retrofit.create(Pomotodo.TodosService.class);
-            Call<TodoList> todoListCall = service.listTodos(String.format("token %s", token));
-            todoListCall.enqueue(new Callback<TodoList>() {
+            Call<TodoList> call = service.getTodos(String.format("token %s", token));
+            call.enqueue(new Callback<TodoList>() {
                 @Override
                 public void onResponse(Call<TodoList> call, Response<TodoList> response) {
                     System.out.println("onResponse(" + call + ", " + response.code() + ")");
 
                     if (response.isSuccessful()) {
                         TodoList todos = response.body();
-                        for (Todo todo: todos) {
-                            DumpUtils.dump(todo.getClass().getName(), todo.toString());
+                        for (Todo todo : todos) {
+                            System.out.println(todo.getDescription());
+//                            DumpUtils.dump(todo.getClass().getName(), todo.getDescription());
                         }
                     }
                     mLocker.countDown();
@@ -59,6 +56,34 @@ public class PomotodoTest {
 
                 @Override
                 public void onFailure(Call<TodoList> call, Throwable t) {
+                    System.out.println("onFailure(" + call + ", " + t + ")");
+                    mLocker.countDown();
+                }
+            });
+        }
+        mLocker.await();
+    }
+
+    @Test
+    public void testcase_postTodo() throws InterruptedException {
+        final CountDownLatch mLocker = new CountDownLatch(1);
+        {
+            Pomotodo.TodosService service = retrofit.create(Pomotodo.TodosService.class);
+            Call<Todo> call = service.postTodo(String.format("token %s", token), "xxx");
+            call.enqueue(new Callback<Todo>() {
+                @Override
+                public void onResponse(Call<Todo> call, Response<Todo> response) {
+                    System.out.println("onResponse(" + call + ", " + response.code() + ")");
+
+                    if (response.isSuccessful()) {
+                        Todo todo = response.body();
+                        System.out.println(todo.toString());
+                    }
+                    mLocker.countDown();
+                }
+
+                @Override
+                public void onFailure(Call<Todo> call, Throwable t) {
                     System.out.println("onFailure(" + call + ", " + t + ")");
                     mLocker.countDown();
                 }

@@ -4,7 +4,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -16,6 +15,8 @@ public class Pomotodo {
     public String token;
 
     public interface TodosService {
+        String baseUrl = "https://api.pomotodo.com/1/";
+
         @FormUrlEncoded
         @POST("todos")
         Call<Todo> postTodo(@Header("Authorization") String token, @Field("description") String description);
@@ -23,12 +24,16 @@ public class Pomotodo {
         Call<TodoList> getTodos(@Header("Authorization") String token);
 
 
+        @FormUrlEncoded
+        @POST("pomos")
+        Call<Todo> postPomo(@Header("Authorization") String token, @Field("description") String description);
+        @GET("pomos")
+        Call<TodoList> getPomos(@Header("Authorization") String token);
 //        Call<Todo> getTodo(@Path("uuid") String uuid);
 
     }
 
     public static class Todos {
-        public static final String baseUrl = "https://api.pomotodo.com/1/";
 
         public static void postTodo(Retrofit retrofit, String token, String description, Callback<Todo> cb) throws InterruptedException {
                 TodosService service = retrofit.create(TodosService.class);
@@ -47,8 +52,23 @@ public class Pomotodo {
         this.token = token;
 
         retrofit = new Retrofit.Builder()
-            .baseUrl(Pomotodo.Todos.baseUrl)
+            .baseUrl(TodosService.baseUrl)
             .addConverterFactory(GsonConverterFactory.create())
             .build();
+    }
+
+    public static class Pomos {
+        public static void postPomo(Retrofit retrofit, String token, String description, Callback<Todo> cb) throws InterruptedException {
+            TodosService service = retrofit.create(TodosService.class);
+            Call<Todo> call = service.postTodo(String.format("token %s", token), description);
+            call.enqueue(cb);
+        }
+
+        public static void getPomos(Retrofit retrofit, String token, Callback<TodoList> cb) {
+            TodosService service = retrofit.create(TodosService.class);
+            Call<TodoList> call = service.getTodos(String.format("token %s", token));
+            call.enqueue(cb);
+        }
+
     }
 }

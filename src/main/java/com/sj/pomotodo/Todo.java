@@ -1,6 +1,11 @@
 package com.sj.pomotodo;
 
 import java.util.ArrayList;
+import java.util.concurrent.CountDownLatch;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Todo {
     private String uuid;
@@ -157,5 +162,44 @@ public class Todo {
             sb.append("description: ").append(getDescription()).append(LF);
         }
         return sb.toString();
+    }
+
+    public static class AsyncCallback<T> implements Callback<Todo> {
+        @Override
+        public void onResponse(Call<Todo> call, Response<Todo> response) {
+            System.out.println("onResponse(" + call + ", " + response.code() + ")");
+
+            if (response.isSuccessful()) {
+                Todo todo = response.body();
+                System.out.println(todo.toString());
+            }
+        }
+
+        @Override
+        public void onFailure(Call<Todo> call, Throwable t) {
+            System.out.println("onFailure(" + call + ", " + t + ")");
+        }
+    }
+
+    public static class SyncCallback<T> extends AsyncCallback<T> {
+        private final CountDownLatch mLocker;
+
+        public SyncCallback(CountDownLatch locker) {
+            mLocker = locker;
+        }
+
+        @Override
+        public void onResponse(Call<Todo> call, Response<Todo> response) {
+            super.onResponse(call, response);
+
+            mLocker.countDown();
+        }
+
+        @Override
+        public void onFailure(Call<Todo> call, Throwable t) {
+            super.onFailure(call, t);
+
+            mLocker.countDown();
+        }
     }
 }

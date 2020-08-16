@@ -11,7 +11,7 @@ import java.util.Locale;
  * @author www.jsons.cn
  * @website http://www.jsons.cn/json2java/
  */
-public class Pomo implements Comparable<Pomo>{
+public class Pomo implements Comparable<Pomo> {
 
     private String uuid;
 
@@ -30,9 +30,11 @@ public class Pomo implements Comparable<Pomo>{
     private int length;
     private boolean abandoned;
     private boolean manual;
+
     public void setUuid(String uuid) {
         this.uuid = uuid;
     }
+
     public String getUuid() {
         return uuid;
     }
@@ -40,6 +42,7 @@ public class Pomo implements Comparable<Pomo>{
     public void setCreated_at(Date created_at) {
         this.created_at = created_at;
     }
+
     public Date getCreated_at() {
         return created_at;
     }
@@ -47,6 +50,7 @@ public class Pomo implements Comparable<Pomo>{
     public void setUpdated_at(Date updated_at) {
         this.updated_at = updated_at;
     }
+
     public Date getUpdated_at() {
         return updated_at;
     }
@@ -54,6 +58,7 @@ public class Pomo implements Comparable<Pomo>{
     public void setDescription(String description) {
         this.description = description;
     }
+
     public String getDescription() {
         return description;
     }
@@ -61,6 +66,7 @@ public class Pomo implements Comparable<Pomo>{
     public void setStarted_at(Date started_at) {
         this.started_at = started_at;
     }
+
     public Date getStarted_at() {
         return started_at;
     }
@@ -68,6 +74,7 @@ public class Pomo implements Comparable<Pomo>{
     public void setEnded_at(Date ended_at) {
         this.ended_at = ended_at;
     }
+
     public Date getEnded_at() {
         return ended_at;
     }
@@ -75,6 +82,7 @@ public class Pomo implements Comparable<Pomo>{
     public void setLocal_started_at(Date local_started_at) {
         this.local_started_at = local_started_at;
     }
+
     public Date getLocal_started_at() {
         return local_started_at;
     }
@@ -82,6 +90,7 @@ public class Pomo implements Comparable<Pomo>{
     public void setLocal_ended_at(Date local_ended_at) {
         this.local_ended_at = local_ended_at;
     }
+
     public Date getLocal_ended_at() {
         return local_ended_at;
     }
@@ -89,13 +98,21 @@ public class Pomo implements Comparable<Pomo>{
     public void setLength(int length) {
         this.length = length;
     }
+
     public int getLength() {
-        return length;
+        int minutes = 0;
+        if (length < 60) {
+            minutes = length;
+        } else {
+            minutes = length / 60;
+        }
+        return minutes;
     }
 
     public void setAbandoned(boolean abandoned) {
         this.abandoned = abandoned;
     }
+
     public boolean getAbandoned() {
         return abandoned;
     }
@@ -103,6 +120,7 @@ public class Pomo implements Comparable<Pomo>{
     public void setManual(boolean manual) {
         this.manual = manual;
     }
+
     public boolean getManual() {
         return manual;
     }
@@ -145,8 +163,8 @@ public class Pomo implements Comparable<Pomo>{
         final String TAB = "  ";
         StringBuilder sb = new StringBuilder();
         {
-            Date begin = getLocal_started_at();
-            Date end = getLocal_ended_at();
+            Date begin = getStarted_at();
+            Date end = getEnded_at();
             final DateFormat sdf_begin = new SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault());
             String beginStr = sdf_begin.format(begin);
 
@@ -154,8 +172,8 @@ public class Pomo implements Comparable<Pomo>{
             String endStr = sdf_end.format(end);
 
             sb.append(beginStr).append("~").append(endStr).append(TAB);
-            sb.append(String.format("%2d", getLength() / 60)).append(TAB);
-            String manual = getManual() ? "T": "F";
+            sb.append(String.format("%2d", getLength())).append(TAB);
+            String manual = getManual() ? "T" : "F";
             sb.append(manual).append(TAB);
             sb.append(getDescription());
         }

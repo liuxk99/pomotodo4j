@@ -30,7 +30,7 @@ public class Pomotodo {
         @POST("pomos")
         Call<Pomo> postPomo(@Header("Authorization") String token, @Field("description") String description);
 
-        @GET("pomos")
+        @GET("pomos?limit=40")
         Call<PomoList> getPomos(@Header("Authorization") String token, @Query("abandoned") boolean abandoned, @Query("manual") boolean manual);
 //        Call<Todo> getTodo(@Path("uuid") String uuid);
 

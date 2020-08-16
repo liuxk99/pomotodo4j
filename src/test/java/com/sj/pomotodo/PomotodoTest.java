@@ -4,6 +4,7 @@ import com.sj.jlibs.persistence.FileUtils;
 
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.concurrent.CountDownLatch;
 
 import retrofit2.Callback;
@@ -54,8 +55,10 @@ public class PomotodoTest {
         }
         mLocker.await();
 
+        Collections.sort(cb.mPomoList);
+        System.out.println("size: " + cb.mPomoList.size());
         for (Pomo pomo: cb.mPomoList) {
-
+            System.out.println(pomo.toLine());
         }
     }
 

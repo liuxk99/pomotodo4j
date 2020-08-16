@@ -1,13 +1,17 @@
 package com.sj.pomotodo;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+
 /**
  * Auto-generated: 2020-08-16 18:9:7
  *
  * @author www.jsons.cn
  * @website http://www.jsons.cn/json2java/
  */
-public class Pomo {
+public class Pomo implements Comparable<Pomo>{
 
     private String uuid;
 
@@ -131,7 +135,35 @@ public class Pomo {
         {
             sb.append("created time: ").append(getCreated_at()).append(LF);
             sb.append("description: ").append(getDescription()).append(LF);
+            sb.append("manual: ").append(getManual()).append(LF);
         }
         return sb.toString();
+    }
+
+    public String toLine() {
+        final String LF = "\n";
+        final String TAB = "  ";
+        StringBuilder sb = new StringBuilder();
+        {
+            Date begin = getLocal_started_at();
+            Date end = getLocal_ended_at();
+            final DateFormat sdf_begin = new SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault());
+            String beginStr = sdf_begin.format(begin);
+
+            final DateFormat sdf_end = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            String endStr = sdf_end.format(end);
+
+            sb.append(beginStr).append("~").append(endStr).append(TAB);
+            sb.append(String.format("%2d", getLength() / 60)).append(TAB);
+            String manual = getManual() ? "T": "F";
+            sb.append(manual).append(TAB);
+            sb.append(getDescription());
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public int compareTo(Pomo o) {
+        return getStarted_at().compareTo(o.getStarted_at());
     }
 }

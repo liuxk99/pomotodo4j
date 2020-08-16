@@ -44,4 +44,19 @@ public class PomotodoTest {
         mLocker.await();
     }
 
+    @Test
+    public void testcase_pomos() throws InterruptedException {
+        final CountDownLatch mLocker = new CountDownLatch(2);
+        PomoList.SyncCallback<PomoList> cb = new PomoList.SyncCallback<PomoList>(mLocker);
+        {
+            Pomotodo.Pomos.getPomos(pomotodo.retrofit, pomotodo.token, false, false, cb);
+            Pomotodo.Pomos.getPomos(pomotodo.retrofit, pomotodo.token, false, true, cb);
+        }
+        mLocker.await();
+
+        for (Pomo pomo: cb.mPomoList) {
+
+        }
+    }
+
 }

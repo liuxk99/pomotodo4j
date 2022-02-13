@@ -15,7 +15,7 @@ public class Pomotodo {
     public final Retrofit retrofit;
     public String token;
 
-    public interface TodosService {
+    public interface Service {
         String baseUrl = "https://api.pomotodo.com/1/";
 
         @FormUrlEncoded
@@ -28,7 +28,12 @@ public class Pomotodo {
 
         @FormUrlEncoded
         @POST("pomos")
-        Call<Pomo> postPomo(@Header("Authorization") String token, @Field("description") String description);
+        Call<Pomo> postPomo(@Header("Authorization") String token,
+                            @Field("timezone") String timezone,
+                            @Field("started_at") String started_at,
+                            @Field("ended_at") String ended_at,
+                            @Field("description") String description
+        );
 
         @GET("pomos?limit=40")
         Call<PomoList> getPomos(@Header("Authorization") String token, @Query("abandoned") boolean abandoned, @Query("manual") boolean manual);
@@ -39,13 +44,13 @@ public class Pomotodo {
     public static class Todos {
 
         public static void postTodo(Retrofit retrofit, String token, String description, Callback<Todo> cb) throws InterruptedException {
-            TodosService service = retrofit.create(TodosService.class);
+            Service service = retrofit.create(Service.class);
             Call<Todo> call = service.postTodo(String.format("token %s", token), description);
             call.enqueue(cb);
         }
 
         public static void getTodos(Retrofit retrofit, String token, Callback<TodoList> cb) {
-            TodosService service = retrofit.create(TodosService.class);
+            Service service = retrofit.create(Service.class);
             Call<TodoList> call = service.getTodos(String.format("token %s", token));
             call.enqueue(cb);
         }
@@ -55,22 +60,24 @@ public class Pomotodo {
         this.token = token;
 
         retrofit = new Retrofit.Builder()
-            .baseUrl(TodosService.baseUrl)
+            .baseUrl(Service.baseUrl)
             .addConverterFactory(GsonConverterFactory.create())
             .build();
     }
 
     public static class Pomos {
-        public static void postPomo(Retrofit retrofit, String token, String description, Callback<Pomo> cb) throws InterruptedException {
-            TodosService service = retrofit.create(TodosService.class);
-            Call<Pomo> call = service.postPomo(String.format("token %s", token), description);
+        public static void getPomos(Retrofit retrofit, String token, boolean abandoned, boolean manual, Callback<PomoList> cb) {
+            Service service = retrofit.create(Service.class);
+            Call<PomoList> call = service.getPomos(String.format("token %s", token), abandoned, manual);
             call.enqueue(cb);
         }
 
-        public static void getPomos(Retrofit retrofit, String token, boolean abandoned, boolean manual, Callback<PomoList> cb) {
-            TodosService service = retrofit.create(TodosService.class);
-            Call<PomoList> call = service.getPomos(String.format("token %s", token), abandoned, manual);
+        public static void postPomo(Retrofit retrofit, String token, String timeZoneID, long started_at, long ended_at, String description, Callback<Pomo> cb) {
+            Service service = retrofit.create(Service.class);
+            Call<Pomo> call = service.postPomo(String.format("token %s", token),
+                timeZoneID, Long.toString(started_at), Long.toString(ended_at), description);
             call.enqueue(cb);
+
         }
     }
 }

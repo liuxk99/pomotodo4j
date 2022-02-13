@@ -4,6 +4,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.CountDownLatch;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Auto-generated: 2020-08-16 18:9:7
@@ -27,7 +32,7 @@ public class Pomo implements Comparable<Pomo> {
     private Date local_started_at;
 
     private Date local_ended_at;
-    private int length;
+    private float length;
     private boolean abandoned;
     private boolean manual;
 
@@ -100,13 +105,13 @@ public class Pomo implements Comparable<Pomo> {
     }
 
     public int getLength() {
-        int minutes = 0;
-        if (length < 60) {
+        float minutes = 0;
+        if (length < 60.0f) {
             minutes = length;
         } else {
             minutes = length / 60;
         }
-        return minutes;
+        return (int)minutes;
     }
 
     public void setAbandoned(boolean abandoned) {
@@ -183,5 +188,45 @@ public class Pomo implements Comparable<Pomo> {
     @Override
     public int compareTo(Pomo o) {
         return getStarted_at().compareTo(o.getStarted_at());
+    }
+
+    public static class PomoAsyncCallback<T> implements Callback<Pomo> {
+        @Override
+        public void onResponse(Call<Pomo> call, Response<Pomo> response) {
+            System.out.println("onResponse(" + call + ", " + response.code() + ")");
+
+            if (response.isSuccessful()) {
+                Pomo body = response.body();
+                System.out.println(body.toString());
+            }
+        }
+
+        @Override
+        public void onFailure(Call<Pomo> call, Throwable t) {
+            System.out.println("onFailure(" + call + ", " + t + ")");
+        }
+    }
+
+    public static class SyncCallbackPomo<T> extends PomoAsyncCallback<T> {
+        private final CountDownLatch mLocker;
+
+        public SyncCallbackPomo(CountDownLatch locker) {
+            this.mLocker = locker;
+        }
+
+        @Override
+        public void onResponse(Call<Pomo> call, Response<Pomo> response) {
+            super.onResponse(call, response);
+
+            mLocker.countDown();
+        }
+
+        @Override
+        public void onFailure(Call<Pomo> call, Throwable t) {
+            super.onFailure(call, t);
+
+            mLocker.countDown();
+
+        }
     }
 }

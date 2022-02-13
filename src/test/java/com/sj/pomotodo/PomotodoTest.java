@@ -1,10 +1,12 @@
 package com.sj.pomotodo;
 
+import com.sj.jlibs.RandomUtils;
 import com.sj.jlibs.persistence.FileUtils;
 
 import org.junit.Test;
 
 import java.util.Collections;
+import java.util.TimeZone;
 import java.util.concurrent.CountDownLatch;
 
 import retrofit2.Callback;
@@ -46,6 +48,23 @@ public class PomotodoTest {
     }
 
     @Test
+    public void testcase_postPomo() throws InterruptedException {
+        final CountDownLatch mLocker = new CountDownLatch(1);
+        {
+            TimeZone timeZone = TimeZone.getDefault();
+            long ended_at = System.currentTimeMillis();
+            int duration = 60 * 1000;
+            long started_at = ended_at - RandomUtils.random(duration, duration + 60 * 1000 * 2);
+
+            String description = "Pomo-XXX";
+            Callback<Pomo> cb = new Pomo.SyncCallbackPomo<Pomo>(mLocker);
+            Pomotodo.Pomos.postPomo(pomotodo.retrofit, pomotodo.token,
+                timeZone.getID(), started_at, ended_at, description, cb);
+        }
+        mLocker.await();
+    }
+
+    @Test
     public void testcase_pomos() throws InterruptedException {
         final CountDownLatch mLocker = new CountDownLatch(2);
         PomoList.SyncCallback<PomoList> cb = new PomoList.SyncCallback<PomoList>(mLocker);
@@ -61,5 +80,4 @@ public class PomotodoTest {
             System.out.println(pomo.toLine());
         }
     }
-
 }

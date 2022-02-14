@@ -135,17 +135,17 @@ public class Pomo implements Comparable<Pomo> {
         final String LF = "\n";
         StringBuilder sb = new StringBuilder("[" + this.getClass().getName() + "] {").append(LF);
         {
-            sb.append(" uuid:").append(uuid).append(LF);
-            sb.append(" created_at:").append(created_at).append(LF);
-            sb.append(" updated_at:").append(updated_at).append(LF);
-            sb.append(" description:").append(description).append(LF);
-            sb.append(" started_at:").append(started_at).append(LF);
-            sb.append(" ended_at:").append(ended_at).append(LF);
-            sb.append(" local_started_at:").append(local_started_at).append(LF);
-            sb.append(" local_ended_at").append(local_ended_at).append(LF);
-            sb.append(" length:").append(length).append(LF);
-            sb.append(" abandoned:").append(abandoned).append(LF);
-            sb.append(" manual:").append(manual).append(LF);
+            sb.append(" uuid: ").append(uuid).append(LF);
+            sb.append(" created_at: ").append(created_at).append(LF);
+            sb.append(" updated_at: ").append(updated_at).append(LF);
+            sb.append(" description: ").append(description).append(LF);
+            sb.append(" started_at: ").append(started_at).append(LF);
+            sb.append(" ended_at: ").append(ended_at).append(LF);
+            sb.append(" local_started_at: ").append(local_started_at).append(LF);
+            sb.append(" local_ended_at: ").append(local_ended_at).append(LF);
+            sb.append(" length: ").append(length).append(LF);
+            sb.append(" abandoned: ").append(abandoned).append(LF);
+            sb.append(" manual: ").append(manual).append(LF);
         }
         sb.append("}").append(LF);
 

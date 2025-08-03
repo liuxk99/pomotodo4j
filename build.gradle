@@ -11,13 +11,15 @@ dependencies {
     api "com.squareup.retrofit2:converter-gson:2.1.0"
 }
 
-sourceCompatibility = "1.7"
-targetCompatibility = "1.7"
-
 compileJava{
     options.encoding = "UTF-8"
 }
 
 compileTestJava {
     options.encoding = "UTF-8"
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
